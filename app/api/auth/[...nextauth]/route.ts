@@ -1,44 +1,41 @@
 import { NextRequest, NextResponse } from "next/server";
 import { NextAuthOptions } from "next-auth";
-// import { CredentialsProvider } from "next-auth/providers/credentials";
-// import Providers from "next-auth/providers";
+import NextAuth from "next-auth";
+import  CredentialsProvider  from "next-auth/providers/credentials";
 
 const handler = NextAuth({
     providers:[
         CredentialsProvider({
-            name: "Credentials",
+            name : "Login with email",
             credentials: {
-                email: { label: "Email", type: "email" },
-                password: { label: "Password", type: "password" },
+                username : {label : "username" , type : "text", placeholder: "abhijitam" },
+                password : {label : "password" , type : "password", placeholder: "password"}
             },
-            async authorize(credentials, req) {
-                const user = await fetch("/api/auth/credentials", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(credentials),
-                });
-                if (!user.ok) {
+
+            async authorize(credentials , req) {
+                if (!credentials) {
                     return null;
                 }
-                return user.json();
-            },
-        }),
+                const username = credentials.username;
+                const password = credentials.password;
+                console.log(username , password);
+
+                const user = {
+                    name : "abhijitam" , 
+                    id : "1",
+                    email : "abhijitam@gmail.com" ,
+                }
+
+                if (user ) {
+                    return user;
+                } else {
+                    return null;
+                }
+            }
+        })
     ]
 })
 
-export  const GET = handler;
-export  const POST = handler;
+export {handler as GET, handler as POST};
 
-
-async function handleAuthRequest(req: NextRequest, options: NextAuthOptions) {
-    // Implement your authentication request handling logic here
-    // This is a placeholder implementation
-    return { message: "Authentication request handled" };
-}
-
-function CredentialsProvider(arg0: { name: string; credentials: { email: { label: string; type: string; }; password: { label: string; type: string; }; }; authorize(credentials: any, req: any): Promise<any>; }): import("next-auth/providers/index").Provider {
-    throw new Error("Function not implemented.");
-}
 
